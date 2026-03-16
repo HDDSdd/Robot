@@ -5,21 +5,38 @@ import log.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MainApplicationFrame extends JFrame {
+public class MainApplicationFrame extends JFrame implements StateWindows {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    public MainApplicationFrame() {
+    private StateProcessing stateProcessing;
+    private LogWindow logWindow;
+    private GameWindow gameWindow;
+    private boolean stateRestored = false;
+    public boolean shouldBeMaximized = true;
+    public MainApplicationFrame(StateProcessing stateProcessing) {
+        this.stateProcessing = stateProcessing;
+
+        // Регистрация компонентов
+        stateProcessing.CreateStateMap(this);
+
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
                 screenSize.width - inset * 2,
                 screenSize.height - inset * 2);
         setContentPane(desktopPane);
-        LogWindow logWindow = createLogWindow();
+
+        logWindow = createLogWindow();
+        stateProcessing.CreateStateMap(logWindow);  // ← Регистрация
         addWindow(logWindow);
-        GameWindow gameWindow = new GameWindow();
+
+        gameWindow = new GameWindow();
+        stateProcessing.CreateStateMap(gameWindow);  // ← Регистрация
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
+
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -30,6 +47,19 @@ public class MainApplicationFrame extends JFrame {
         });
     }
 
+    public void restoreState() {
+        stateProcessing.restoreAllStates();
+        stateRestored = true;
+    }
+
+    public boolean hasRestoredState() {
+        return stateRestored;
+    }
+
+    public boolean shouldBeMaximized() {
+        return shouldBeMaximized;
+    }
+
     /**
      * Метод обработки запроса на выход из приложения.
      * Содержит диалог подтверждения и логику завершения.
@@ -38,7 +68,6 @@ public class MainApplicationFrame extends JFrame {
     private void confirmAndExit() {
         UIManager.put("OptionPane.yesButtonText", "Да");
         UIManager.put("OptionPane.noButtonText", "Нет");
-        UIManager.put("OptionPane.cancelButtonText", "Отмена");
 
         int result = JOptionPane.showConfirmDialog(
                 this,
@@ -49,6 +78,7 @@ public class MainApplicationFrame extends JFrame {
         );
 
         if (result == JOptionPane.YES_OPTION) {
+            stateProcessing.SaveStateMap();
             System.exit(0);
         }
     }
@@ -142,6 +172,38 @@ public class MainApplicationFrame extends JFrame {
                  | IllegalAccessException | UnsupportedLookAndFeelException e) {
             // just ignore
             Logger.debug("Не удалось установить схему оформления: " + className);
+        }
+    }
+
+    @Override
+    public String prefix() {
+        return "Main";
+    }
+
+    @Override
+    public Map<String, String> stateSave() {
+        Map<String, String> state = new HashMap<>();
+        state.put("x", String.valueOf(getX()));
+        state.put("y", String.valueOf(getY()));
+        state.put("width", String.valueOf(getWidth()));
+        state.put("height", String.valueOf(getHeight()));
+        state.put("extendedState", String.valueOf(getExtendedState()));
+        return state;
+    }
+
+    @Override
+    public void restoreState(Map<String, String> stateSave) {
+        if (stateSave.containsKey("x")) {
+            setBounds(
+                    Integer.parseInt(stateSave.get("x")),
+                    Integer.parseInt(stateSave.get("y")),
+                    Integer.parseInt(stateSave.get("width")),
+                    Integer.parseInt(stateSave.get("height"))
+            );
+        }
+        if (stateSave.containsKey("extendedState")) {
+            int extendedState = Integer.parseInt(stateSave.get("extendedState"));
+            shouldBeMaximized = (extendedState == Frame.MAXIMIZED_BOTH);
         }
     }
 }
