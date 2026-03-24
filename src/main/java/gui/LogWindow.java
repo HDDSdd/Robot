@@ -51,6 +51,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Stat
         return "log";
     }
 
+    /**
+     * Сохраняет: координаты, размеры, состояние свёрнутости.
+     */
     @Override
     public Map<String, String> stateSave() {
         Map<String, String> state = new HashMap<>();
@@ -62,7 +65,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Stat
         state.put("isSelected", String.valueOf(isSelected()));
         return state;
     }
-
+    /**
+     * Восстанавливает: координаты и размеры.
+     */
     @Override
     public void restoreState(Map<String, String> stateSave) {
         if (stateSave.containsKey("x")) {

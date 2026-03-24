@@ -15,10 +15,13 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
     private GameWindow gameWindow;
     private boolean stateRestored = false;
     public boolean shouldBeMaximized = true;
+    /**
+     * Создаёт главное окно с менеджером состояния.
+     * @param stateProcessing менеджер для сохранения/восстановления состояния
+     */
     public MainApplicationFrame(StateProcessing stateProcessing) {
         this.stateProcessing = stateProcessing;
 
-        // Регистрация компонентов
         stateProcessing.CreateStateMap(this);
 
         int inset = 50;
@@ -46,16 +49,23 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
             }
         });
     }
-
+    /**
+     * Восстанавливает состояние окна из сохранённых данных.
+     * Вызывается при запуске приложения.
+     */
     public void restoreState() {
         stateProcessing.restoreAllStates();
         stateRestored = true;
     }
-
+    /**
+     * Проверяет, было ли восстановлено состояние из файла.
+     */
     public boolean hasRestoredState() {
         return stateRestored;
     }
-
+    /**
+     * Проверяет, должно ли окно быть развёрнутым.
+     */
     public boolean shouldBeMaximized() {
         return shouldBeMaximized;
     }
@@ -179,7 +189,9 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
     public String prefix() {
         return "Main";
     }
-
+    /**
+     * Сохраняет: координаты, размеры, состояние развёртывания.
+     */
     @Override
     public Map<String, String> stateSave() {
         Map<String, String> state = new HashMap<>();
@@ -190,7 +202,9 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
         state.put("extendedState", String.valueOf(getExtendedState()));
         return state;
     }
-
+    /**
+     * Восстанавливает: координаты, размеры, состояние развёртывания.
+     */
     @Override
     public void restoreState(Map<String, String> stateSave) {
         if (stateSave.containsKey("x")) {

@@ -12,6 +12,9 @@ public class StateProcessing {
     public StateProcessing() {
         this.config = System.getProperty("user.home") + "/state.cfg";
     }
+    /**
+     * Записывает словарь состояния в файл конфигурации.
+     */
     public void WriteToFile(Map<String, String> stateSave) {
         try {
             File file = new File(config);
@@ -31,12 +34,15 @@ public class StateProcessing {
             e.printStackTrace();
         }
     }
+    /**
+     * Читает словарь состояния из файла конфигурации.
+     */
     public Map<String, String> ReadFromFile() {
         Map<String, String> stateSave = new HashMap<>();
         File file = new File(config);
 
         if (!file.exists()) {
-            return stateSave;  // Возвращаем пустой Map
+            return stateSave;
         }
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
@@ -55,9 +61,16 @@ public class StateProcessing {
         }
         return stateSave;
     }
+    /**
+     * Регистрирует компонент для участия в сохранении состояния.
+     */
     public void CreateStateMap(StateWindows stateWindows) {
         states.add(stateWindows);
     }
+    /**
+     * Сохраняет состояния всех зарегистрированных компонентов в файл.
+     * Вызывается при закрытии приложения.
+     */
     public void SaveStateMap() {
         Map<String, String> globalStateMap = new HashMap<>();
         for (StateWindows stateWindows : states) {
@@ -69,7 +82,10 @@ public class StateProcessing {
         }
         WriteToFile(globalStateMap);
     }
-
+    /**
+     * Восстанавливает состояния всех зарегистрированных компонентов из файла.
+     * Вызывается при запуске приложения.
+     */
     public void restoreAllStates() {
         Map<String, String> globalState = ReadFromFile();
         for (StateWindows component : states) {
@@ -78,7 +94,11 @@ public class StateProcessing {
             component.restoreState(componentState);
         }
     }
-
+    /**
+     * Фильтрует глобальный словарь состояния, извлекая записи, принадлежащие конкретному компоненту.
+     * Метод просматривает все записи и выбирает только те, ключи которых
+     * начинаются с указанного. Из выбранных ключей префикс удаляется,
+     */
     private Map<String, String> filterByPrefix(Map<String, String> global, String prefix) {
         Map<String, String> filtered = new HashMap<>();
         for (Map.Entry<String, String> entry : global.entrySet()) {
