@@ -25,9 +25,6 @@ public class GameWindow extends JInternalFrame implements StateWindows
         return "Game";
     }
 
-    /**
-     * Сохраняет: координаты, размеры, состояние свёрнутости.
-     */
     @Override
     public Map<String, String> stateSave() {
         Map<String, String> state = new HashMap<>();
@@ -38,9 +35,7 @@ public class GameWindow extends JInternalFrame implements StateWindows
         state.put("isIcon", String.valueOf(isIcon()));
         return state;
     }
-    /**
-     * Восстанавливает: координаты и размеры.
-     */
+
     @Override
     public void restoreState(Map<String, String> stateSave) {
         if (stateSave.containsKey("x")) {

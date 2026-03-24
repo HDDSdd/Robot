@@ -189,9 +189,7 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
     public String prefix() {
         return "Main";
     }
-    /**
-     * Сохраняет: координаты, размеры, состояние развёртывания.
-     */
+
     @Override
     public Map<String, String> stateSave() {
         Map<String, String> state = new HashMap<>();
@@ -202,9 +200,7 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
         state.put("extendedState", String.valueOf(getExtendedState()));
         return state;
     }
-    /**
-     * Восстанавливает: координаты, размеры, состояние развёртывания.
-     */
+
     @Override
     public void restoreState(Map<String, String> stateSave) {
         if (stateSave.containsKey("x")) {

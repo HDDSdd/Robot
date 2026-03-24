@@ -6,7 +6,17 @@ import java.util.Map;
  */
 
 public interface StateWindows {
+    /**
+     * Возвращает префикс для ключей состояния данного компонента.
+     * Используется для разделения состояний разных компонентов в общем файле.
+     */
     String prefix();
+    /**
+     * Сохраняет текущее состояние компонента в словарь.
+     */
     Map<String, String> stateSave();
+    /**
+     * Восстанавливает состояние компонента из словаря.
+     */
     void restoreState(Map<String, String> stateSave);
 }

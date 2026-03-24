@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Менеджер состояния приложения.
+ * Отвечает за сохранение и восстановление настроек всех окон в файл конфигурации
+ */
 public class StateProcessing {
     private final String config;
     private final List<StateWindows> states = new ArrayList<>();
