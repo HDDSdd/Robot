@@ -62,7 +62,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Stat
         state.put("width", String.valueOf(getWidth()));
         state.put("height", String.valueOf(getHeight()));
         state.put("isIcon", String.valueOf(isIcon()));
-        state.put("isSelected", String.valueOf(isSelected()));
         return state;
     }
     /**
@@ -77,6 +76,21 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Stat
                     Integer.parseInt(stateSave.get("width")),
                     Integer.parseInt(stateSave.get("height"))
             );
+        }
+        if (stateSave.containsKey("isIcon")) {
+            boolean shouldIcon = Boolean.parseBoolean(stateSave.get("isIcon"));
+            if (shouldIcon) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        java.lang.reflect.Method setIconMethod =
+                                JInternalFrame.class.getDeclaredMethod("setIcon", boolean.class);
+                        setIconMethod.setAccessible(true);
+                        setIconMethod.invoke(this, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
         }
     }
 }
