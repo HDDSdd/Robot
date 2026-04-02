@@ -1,4 +1,4 @@
-package gui;
+package Windows;
 
 import log.LogChangeListener;
 import log.LogEntry;
@@ -60,32 +60,5 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Stat
         state.put("height", String.valueOf(getHeight()));
         state.put("isIcon", String.valueOf(isIcon()));
         return state;
-    }
-
-    @Override
-    public void restoreState(Map<String, String> stateSave) {
-        if (stateSave.containsKey("x")) {
-            setBounds(
-                    Integer.parseInt(stateSave.get("x")),
-                    Integer.parseInt(stateSave.get("y")),
-                    Integer.parseInt(stateSave.get("width")),
-                    Integer.parseInt(stateSave.get("height"))
-            );
-        }
-        if (stateSave.containsKey("isIcon")) {
-            boolean shouldIcon = Boolean.parseBoolean(stateSave.get("isIcon"));
-            if (shouldIcon) {
-                SwingUtilities.invokeLater(() -> {
-                    try {
-                        java.lang.reflect.Method setIconMethod =
-                                JInternalFrame.class.getDeclaredMethod("setIcon", boolean.class);
-                        setIconMethod.setAccessible(true);
-                        setIconMethod.invoke(this, true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-        }
     }
 }

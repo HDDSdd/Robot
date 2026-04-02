@@ -1,5 +1,6 @@
-package gui;
+package Windows;
 
+import gui.RobotModel;
 import log.Logger;
 
 import javax.swing.*;
@@ -13,8 +14,8 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
     private StateProcessing stateProcessing;
     private LogWindow logWindow;
     private GameWindow gameWindow;
-    private boolean stateRestored = false;
-    public boolean shouldBeMaximized = true;
+    private InfoWindow infoWindow;
+
     /**
      * Создаёт главное окно с менеджером состояния.
      * @param stateProcessing менеджер для сохранения/восстановления состояния
@@ -32,14 +33,22 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
         setContentPane(desktopPane);
 
         logWindow = createLogWindow();
-        stateProcessing.CreateStateMap(logWindow);  // ← Регистрация
+        stateProcessing.CreateStateMap(logWindow);
         addWindow(logWindow);
 
-        gameWindow = new GameWindow();
-        stateProcessing.CreateStateMap(gameWindow);  // ← Регистрация
+        RobotModel robotModel = new RobotModel();
+
+        gameWindow = new GameWindow(robotModel);
+        stateProcessing.CreateStateMap(gameWindow);
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
 
+        infoWindow = new InfoWindow(robotModel);
+        stateProcessing.CreateStateMap(infoWindow);
+        infoWindow.setSize(320, 180);
+        addWindow(infoWindow);
+
+        stateProcessing.restoreAllStates();
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -48,26 +57,6 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
                 confirmAndExit();
             }
         });
-    }
-    /**
-     * Восстанавливает состояние окна из сохранённых данных.
-     * Вызывается при запуске приложения.
-     */
-    public void restoreState() {
-        stateProcessing.restoreAllStates();
-        stateRestored = true;
-    }
-    /**
-     * Проверяет, было ли восстановлено состояние из файла.
-     */
-    public boolean hasRestoredState() {
-        return stateRestored;
-    }
-    /**
-     * Проверяет, должно ли окно быть развёрнутым.
-     */
-    public boolean shouldBeMaximized() {
-        return shouldBeMaximized;
     }
 
     /**
@@ -201,19 +190,4 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
         return state;
     }
 
-    @Override
-    public void restoreState(Map<String, String> stateSave) {
-        if (stateSave.containsKey("x")) {
-            setBounds(
-                    Integer.parseInt(stateSave.get("x")),
-                    Integer.parseInt(stateSave.get("y")),
-                    Integer.parseInt(stateSave.get("width")),
-                    Integer.parseInt(stateSave.get("height"))
-            );
-        }
-        if (stateSave.containsKey("extendedState")) {
-            int extendedState = Integer.parseInt(stateSave.get("extendedState"));
-            shouldBeMaximized = (extendedState == Frame.MAXIMIZED_BOTH);
-        }
-    }
 }

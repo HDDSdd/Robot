@@ -1,4 +1,4 @@
-package gui;
+package Windows;
 
 import java.util.Map;
 /**
@@ -15,8 +15,4 @@ public interface StateWindows {
      * Сохраняет текущее состояние компонента в словарь.
      */
     Map<String, String> stateSave();
-    /**
-     * Восстанавливает состояние компонента из словаря.
-     */
-    void restoreState(Map<String, String> stateSave);
 }

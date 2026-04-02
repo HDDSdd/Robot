@@ -1,10 +1,13 @@
-package gui;
+package Windows;
 
+import javax.swing.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * Менеджер состояния приложения.
  * Отвечает за сохранение и восстановление настроек всех окон в файл конфигурации
@@ -12,9 +15,11 @@ import java.util.Map;
 public class StateProcessing {
     private final String config;
     private final List<StateWindows> states = new ArrayList<>();
+
     public StateProcessing() {
-        this.config = System.getProperty("user.home") + "/state.cfg";
+        this.config = System.getProperty("user.home") + "/Tolkachev" + "/state.cfg";
     }
+
     /**
      * Записывает словарь состояния в файл конфигурации.
      */
@@ -23,7 +28,7 @@ public class StateProcessing {
             File file = new File(config);
             File parentDir = file.getParentFile();
             if (parentDir != null && !parentDir.exists()) {
-                boolean created = parentDir.mkdirs();
+                parentDir.mkdirs();
             }
 
             try (FileWriter writer = new FileWriter(config, false)) {
@@ -37,6 +42,7 @@ public class StateProcessing {
             e.printStackTrace();
         }
     }
+
     /**
      * Читает словарь состояния из файла конфигурации.
      */
@@ -64,12 +70,14 @@ public class StateProcessing {
         }
         return stateSave;
     }
+
     /**
      * Регистрирует компонент для участия в сохранении состояния.
      */
     public void CreateStateMap(StateWindows stateWindows) {
         states.add(stateWindows);
     }
+
     /**
      * Сохраняет состояния всех зарегистрированных компонентов в файл.
      * Вызывается при закрытии приложения.
@@ -77,7 +85,7 @@ public class StateProcessing {
     public void SaveStateMap() {
         Map<String, String> globalStateMap = new HashMap<>();
         for (StateWindows stateWindows : states) {
-            Map<String,String> componentState = stateWindows.stateSave();
+            Map<String, String> componentState = stateWindows.stateSave();
             String prefix = stateWindows.prefix() + ".";
             for (Map.Entry<String, String> entry : componentState.entrySet()) {
                 globalStateMap.put(prefix + entry.getKey(), entry.getValue());
@@ -85,6 +93,7 @@ public class StateProcessing {
         }
         WriteToFile(globalStateMap);
     }
+
     /**
      * Восстанавливает состояния всех зарегистрированных компонентов из файла.
      * Вызывается при запуске приложения.
@@ -94,9 +103,43 @@ public class StateProcessing {
         for (StateWindows component : states) {
             String prefix = component.prefix() + ".";
             Map<String, String> componentState = filterByPrefix(globalState, prefix);
-            component.restoreState(componentState);
+
+            if (component instanceof MainApplicationFrame frame) {
+                if (componentState.containsKey("x")) {
+                    frame.setBounds(
+                            Integer.parseInt(componentState.get("x")),
+                            Integer.parseInt(componentState.get("y")),
+                            Integer.parseInt(componentState.get("width")),
+                            Integer.parseInt(componentState.get("height"))
+                    );
+                }
+            } else if (component instanceof JInternalFrame frame) {
+                if (componentState.containsKey("x")) {
+                    frame.setBounds(
+                            Integer.parseInt(componentState.get("x")),
+                            Integer.parseInt(componentState.get("y")),
+                            Integer.parseInt(componentState.get("width")),
+                            Integer.parseInt(componentState.get("height"))
+                    );
+                }
+                if (componentState.containsKey("isIcon")) {
+                    boolean shouldIcon = Boolean.parseBoolean(componentState.get("isIcon"));
+                    if (shouldIcon) {
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                Method setIconMethod = JInternalFrame.class.getDeclaredMethod("setIcon", boolean.class);
+                                setIconMethod.setAccessible(true);
+                                setIconMethod.invoke(frame, true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                }
+            }
         }
     }
+
     /**
      * Фильтрует глобальный словарь состояния, извлекая записи, принадлежащие конкретному компоненту.
      * Метод просматривает все записи и выбирает только те, ключи которых
@@ -114,5 +157,4 @@ public class StateProcessing {
         }
         return filtered;
     }
-
-    }
+}

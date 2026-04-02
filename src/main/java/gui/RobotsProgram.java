@@ -1,9 +1,11 @@
 package gui;
 
+import Windows.MainApplicationFrame;
+import Windows.StateProcessing;
+
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Map;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -22,21 +24,7 @@ public class RobotsProgram {
 
         SwingUtilities.invokeLater(() -> {
             MainApplicationFrame frame = new MainApplicationFrame(stateManager);
-            frame.restoreState();
             frame.setVisible(true);
-            if (!frame.hasRestoredState()) {
-                frame.pack();
-            }
-            if (frame.shouldBeMaximized()) {
-                frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-            }
-            frame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    stateManager.SaveStateMap();
-                    System.exit(0);
-                }
-            });
         });
     }
 }
