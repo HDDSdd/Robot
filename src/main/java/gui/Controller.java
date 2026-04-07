@@ -14,8 +14,7 @@ import java.awt.event.MouseEvent;
  */
 public class Controller {
 
-    private static final int UPDATE_INTERVAL_MS = 10;
-
+    private static final int UPDATE_INTERVAL_MS = 3;
     /**
      * Создаёт контроллер и инициализирует игровую логику.
      * Мгновенно запускает таймер обновления и регистрирует обработчик

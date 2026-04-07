@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -38,12 +39,61 @@ public class GameVisualizer extends JPanel {
      * вычисляется как {@code (coordinate - 5)}, чтобы переданные координаты
      * соответствовали центру фигуры
      */
+
+
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.fillOval((int) (model.getRobotX() - 5), (int) (model.getRobotY() - 5), 10, 10);
-        g2d.drawOval(model.getTargetX() - 5, model.getTargetY() - 5, 10, 10);
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+        try {
+            drawRobot(g2d, (int) model.getRobotX(), (int) model.getRobotY(), model.getRobotDir());
+            drawTarget(g2d, model.getTargetX(), model.getTargetY());
+        } finally {
+            g2d.dispose();
+        }
+    }
+
+    /**
+     * Рисует тело робота и его ориентир.
+     */
+    private void drawRobot(Graphics2D g, int x, int y, double direction) {
+        AffineTransform t = AffineTransform.getRotateInstance(direction, x, y);
+        g.setTransform(t);
+
+        g.setColor(Color.MAGENTA);
+        fillOval(g, x, y, 30, 10);
+        g.setColor(Color.BLACK);
+        drawOval(g, x, y, 30, 10);
+        g.setColor(Color.WHITE);
+        fillOval(g, x + 10, y, 5, 5);
+        g.setColor(Color.BLACK);
+        drawOval(g, x + 10, y, 5, 5);
+    }
+
+    /**
+     * Рисует цель на поле.
+     */
+    private void drawTarget(Graphics2D g, int x, int y) {
+        g.setTransform(new AffineTransform());
+
+        g.setColor(Color.GREEN);
+        fillOval(g, x, y, 5, 5);
+        g.setColor(Color.BLACK);
+        drawOval(g, x, y, 5, 5);
+    }
+
+    /**
+     * Рисует закрашенный овал, центрированный в указанной точке.
+     */
+    private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
+        g.fillOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
+    }
+
+    /**
+     * Рисует контур овала, центрированного в указанной точке
+     */
+    private static void drawOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
+        g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
 
 }

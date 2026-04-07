@@ -22,7 +22,7 @@ public class RobotModel {
     private volatile int targetX = 150;
     private volatile int targetY = 100;
 
-    private static final double MAX_VELOCITY = 0.4;
+    private static final double MAX_VELOCITY = 1.6;
     private static final double DISTANCE_TOLERANCE = 0.5;
 
     /**
