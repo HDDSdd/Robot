@@ -1,5 +1,6 @@
 package Windows;
 
+import gui.Controller;
 import gui.GameVisualizer;
 import gui.RobotModel;
 
@@ -8,17 +9,32 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Окно игрового поля, реализованное как внутреннее окно ({@code JInternalFrame}).
+ * <p>
+ * Выступает в роли View/Mediator в архитектуре приложения: объединяет модель
+ * ({@link RobotModel}), компонент отрисовки ({@link GameVisualizer}) и логику
+ * управления ({@link Controller}). Реализует интерфейс {@link StateWindows}
+ */
 public class GameWindow extends JInternalFrame implements StateWindows {
-    private final GameVisualizer gameVisualizer;
 
-
+    /**
+     * Создаёт и инициализирует игровое окно с привязкой к указанной модели.
+     * Конфигурирует заголовок окна, разрешает изменение размера, закрытие,
+     * разворачивание и сворачивание. Создаёт экземпляр визуализатора и контроллера,
+     * связывает их с моделью и добавляет визуализатор в центральную область окна.
+     */
     public GameWindow(RobotModel model) {
         super("Игровое поле", true, true, true, true);
-        gameVisualizer = new GameVisualizer(model);
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(gameVisualizer, BorderLayout.CENTER);
-        getContentPane().add(panel);
-        pack();
+
+        GameVisualizer gameVisualizer = new GameVisualizer(model);
+        Controller controller = new Controller(model, gameVisualizer);
+
+        setLayout(new BorderLayout());
+        add(gameVisualizer, BorderLayout.CENTER);
+
+        setSize(400, 400);
+        setVisible(true);
     }
 
     @Override

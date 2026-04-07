@@ -1,5 +1,7 @@
 package Windows;
 
+import gui.Controller;
+import gui.GameVisualizer;
 import gui.RobotModel;
 import log.Logger;
 
@@ -22,6 +24,11 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
      */
     public MainApplicationFrame(StateProcessing stateProcessing) {
         this.stateProcessing = stateProcessing;
+
+        RobotModel model = new RobotModel();
+        GameVisualizer view = new GameVisualizer(model);
+        Controller controller = new Controller(model, view);
+
 
         stateProcessing.CreateStateMap(this);
 

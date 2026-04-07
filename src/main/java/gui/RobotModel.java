@@ -22,8 +22,7 @@ public class RobotModel {
     private volatile int targetX = 150;
     private volatile int targetY = 100;
 
-    private static final double MAX_VELOCITY = 0.1;
-
+    private static final double MAX_VELOCITY = 0.4;
     private static final double DISTANCE_TOLERANCE = 0.5;
 
     /**
@@ -70,7 +69,7 @@ public class RobotModel {
         }
 
         double velocity = MAX_VELOCITY;
-        if (dist < 20.0) {
+        if (dist < 10.0) {
             velocity = Math.max(0.01, dist * 0.05);
         }
 
@@ -118,15 +117,14 @@ public class RobotModel {
     /**
      * Возвращает текущую координату X робота.
      */
-    public double getRobotX() {
-        return robotX;
+    public double getRobotX() {return (int) robotX;
     }
 
     /**
      * Возвращает текущую координату Y робота.
      */
     public double getRobotY() {
-        return robotY;
+        return (int) robotY;
     }
 
     /**
@@ -164,14 +162,6 @@ public class RobotModel {
         propertyChangeSupport.firePropertyChange("state", null, null);
     }
 
-    /**
-     * Вычисляет евклидово расстояние между двумя точками.
-     */
-    private double distance(double x1, double y1, double x2, double y2) {
-        double diffX = x1 - x2;
-        double diffY = y1 - y2;
-        return Math.sqrt(diffX * diffX + diffY * diffY);
-    }
 
     /**
      * Вычисляет направление от одной точки к другой и нормализует угол.
