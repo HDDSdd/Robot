@@ -1,5 +1,7 @@
 package gui;
 
+import log.Logger;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -35,6 +37,7 @@ public class Controller {
         view.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                Logger.info("Цель: x=" + e.getX() + ", y=" + e.getY());
                 model.setTargetPosition(e.getPoint());
             }
         });

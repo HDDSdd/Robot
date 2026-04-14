@@ -163,10 +163,15 @@ public class MainApplicationFrame extends JFrame implements StateWindows {
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
         JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_L);
+        JMenuItem newAddLogMessageItem = new JMenuItem("Новое сообщение в лог", KeyEvent.VK_Q);
         addLogMessageItem.addActionListener((event) -> {
             Logger.debug("Новая строка");
         });
+        newAddLogMessageItem.addActionListener((event) -> {
+            Logger.debug("Самая новая строка");
+        });
         testMenu.add(addLogMessageItem);
+        testMenu.add(newAddLogMessageItem);
         return testMenu;
     }
 

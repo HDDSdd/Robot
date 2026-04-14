@@ -39,8 +39,6 @@ public class GameVisualizer extends JPanel {
      * вычисляется как {@code (coordinate - 5)}, чтобы переданные координаты
      * соответствовали центру фигуры
      */
-
-
     @Override
     public void paint(Graphics g) {
         super.paint(g);
